@@ -37,16 +37,25 @@ npm install
 npm run dev
 ```
 
-🔐 Environment Variables
+---
+
+## 🔐 Environment Variables
 
 Create a .env.local file:
-DATABASE_URL=your_database_url_here
 
-🚀 Deployment
+```bash
+DATABASE_URL=your_database_url_here
+```
+
+---
+
+## 🚀 Deployment
 
 This project is optimized for deployment on Vercel. 1. Push to GitHub 2. Import project in Vercel 3. Add environment variables 4. Deploy
 
-👤 Author
+---
+
+## 👤 Author
 
 Wilson Balderrama
 • LinkedIn: https://www.linkedin.com/in/wilsonbalderrama
