@@ -64,5 +64,5 @@ This project is optimized for deployment on Vercel.
 
 Wilson Balderrama
 
-• LinkedIn: https://www.linkedin.com/in/wilsonbalderrama
-• Telegram: https://t.me/wilsonbalderrama
+- LinkedIn: https://www.linkedin.com/in/wilsonbalderrama
+- Telegram: https://t.me/wilsonbalderrama
