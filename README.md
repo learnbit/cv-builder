@@ -63,5 +63,6 @@ This project is optimized for deployment on Vercel.
 ## 👤 Author
 
 Wilson Balderrama
+
 • LinkedIn: https://www.linkedin.com/in/wilsonbalderrama
 • Telegram: https://t.me/wilsonbalderrama
