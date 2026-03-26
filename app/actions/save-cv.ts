@@ -9,7 +9,6 @@ export async function saveCV(userId: string, data: CvType) {
   if (!data) throw new Error("data is required");
 
   const jsonData = data as Prisma.InputJsonValue;
-  console.log(`Saving CV for userId: ${userId}`, { jsonData });
 
   return prisma.cv.upsert({
     where: { userId },

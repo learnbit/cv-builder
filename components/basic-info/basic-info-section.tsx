@@ -13,8 +13,6 @@ export default function BasicInfoSection(props: BasicInfoSectionProps) {
   const { basicInfo, dispatch } = props;
   const { fullName, title, about } = basicInfo;
 
-  console.log(`BasicInfoSection rendered with:`, { basicInfo });
-
   return (
     <FormCard>
       <TextField

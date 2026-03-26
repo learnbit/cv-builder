@@ -50,8 +50,6 @@ export default function CertificationForm(props: CertificationFormProps) {
   ) => {
     const { name, value } = e.target;
 
-    console.log(`handleInputChange: name=${name}, value=${value}`);
-
     if (!certification) return;
 
     if (isNew) {

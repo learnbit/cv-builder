@@ -223,6 +223,102 @@
     }
 }
 
+/* =========================
+   Clerk UserProfile modal
+========================= */
+
+/* Fondo general */
+.cl-userProfile-root,
+.cl-userProfileCard,
+.cl-pageScrollBox,
+.cl-page {
+  background: #0a0a0a !important;
+  color: #ffffff !important;
+}
+
+/* Títulos principales: Account, Security, Profile details, etc */
+.cl-userProfile-root .cl-headerTitle,
+.cl-userProfile-root h1,
+.cl-userProfile-root h2,
+.cl-userProfile-root h3,
+.cl-userProfile-root .cl-profileSectionTitleText,
+.cl-userProfile-root .cl-profileSectionHeader {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Subtítulos / texto muted */
+.cl-userProfile-root [data-color="secondary"],
+.cl-userProfile-root p[data-color="secondary"],
+.cl-userProfile-root .cl-headerSubtitle,
+.cl-userProfile-root .cl-profileSectionContent p,
+.cl-userProfile-root .cl-profileSectionContent span {
+  color: #a3a3a3 !important;
+  opacity: 1 !important;
+}
+
+/* Textos primarios */
+.cl-userProfile-root [data-color="primary"],
+.cl-userProfile-root [data-color="inherit"] {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Sidebar */
+.cl-userProfile-root .cl-navbar {
+  background: #0a0a0a !important;
+  border-right: 1px solid rgb(255 255 255 / 0.1) !important;
+}
+
+.cl-userProfile-root .cl-navbarButton {
+  color: #d4d4d4 !important;
+}
+
+.cl-userProfile-root .cl-navbarButton:hover {
+  background: rgb(255 255 255 / 0.06) !important;
+  color: #ffffff !important;
+}
+
+.cl-userProfile-root .cl-navbarButtonActive {
+  background: rgb(255 255 255 / 0.10) !important;
+  color: #ffffff !important;
+  border-radius: 0.75rem !important;
+}
+
+/* Secciones */
+.cl-userProfile-root .cl-profileSection {
+  border-color: rgb(255 255 255 / 0.1) !important;
+}
+
+/* Links y acciones normales */
+.cl-userProfile-root a,
+.cl-userProfile-root button {
+  color: #ffffff !important;
+}
+
+/* Danger zone / delete account */
+.cl-userProfile-root .cl-profileSection__danger,
+.cl-userProfile-root .cl-profileSection__danger * {
+  border-color: rgb(255 255 255 / 0.1) !important;
+}
+
+.cl-userProfile-root .cl-profileSection__danger button,
+.cl-userProfile-root .cl-profileSection__danger a,
+.cl-userProfile-root .cl-profileSection__danger [role="button"] {
+  color: #f87171 !important; /* red-400 */
+}
+
+.cl-userProfile-root .cl-profileSection__danger button:hover,
+.cl-userProfile-root .cl-profileSection__danger a:hover,
+.cl-userProfile-root .cl-profileSection__danger [role="button"]:hover {
+  color: #ef4444 !important; /* red-500 */
+}
+
+/* Footer dev banner */
+.cl-userProfile-root .cl-footer {
+  display: none !important;
+}
+
 /* --------- CV PAGE --------- */
 @media print {
   /* * {

@@ -28,7 +28,6 @@ export function educationReducer(
       return [action.payload, ...state];
 
     case EducationActionTypes.UPDATE_EDUCATION:
-      console.log("update education", action.payload);
       return state.map((edu) =>
         edu.id === action.payload.id ? action.payload : edu
       );

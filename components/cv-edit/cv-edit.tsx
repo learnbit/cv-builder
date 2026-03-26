@@ -130,8 +130,6 @@ export default function CvEdit(props: CvProps) {
   const handleSubmitAddLanguage = () => {
     if (!newLanguage) return;
 
-    console.log(`Submitting new language: ${JSON.stringify(newLanguage)}`);
-
     dispatch({
       type: LanguageActionTypes.ADD_LANGUAGE,
       payload: newLanguage,

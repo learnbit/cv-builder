@@ -28,7 +28,7 @@ export default function Main({
   }, [cvState, userId]);
 
   return (
-    <main className="flex-1 min-h-0 grid md:grid-cols-2 overflow-x-hidden gap-6 px-6">
+    <main className="flex-1 min-h-0 grid md:grid-cols-2 overflow-x-hidden gap-6 p-6">
       <div className="md:hidden col-span-2">
         <Tabs defaultValue="edit" className="w-full">
           <TabsList

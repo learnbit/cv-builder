@@ -32,7 +32,6 @@ export function experienceReducer(
       return [action.payload, ...state];
 
     case ExperienceActionTypes.UPDATE_EXPERIENCE:
-      console.log("update experience", { payload: action.payload });
       return state.map((exp) =>
         exp.id === action.payload.id ? action.payload : exp
       );
