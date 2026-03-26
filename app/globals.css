@@ -319,6 +319,29 @@
   display: none !important;
 }
 
+.cl-userButtonPopoverCard,
+.cl-userButtonPopoverCard * {
+  color: #ffffff !important;
+}
+
+/* secondary text (email, etc) */
+.cl-userButtonPopoverCard [data-color="secondary"] {
+  color: #a3a3a3 !important;
+  opacity: 1 !important;
+}
+
+/* primary text */
+.cl-userButtonPopoverCard [data-color="primary"],
+.cl-userButtonPopoverCard [data-color="inherit"] {
+  color: #ffffff !important;
+}
+
+/* action buttons */
+.cl-userButtonPopoverCard button,
+.cl-userButtonPopoverCard a {
+  color: #ffffff !important;
+}
+
 /* --------- CV PAGE --------- */
 @media print {
   /* * {
