@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ui } from "@clerk/ui";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground grid grid-rows-[100px_1fr_100px] h-screen`}
       >
         <ClerkProvider
+          ui={ui}
           afterSignOutUrl="/sign-in"
           appearance={{
             elements: {

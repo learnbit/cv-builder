@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^7.0.2",
+    "@clerk/ui": "^1.2.4",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
+    "@solana/web3.js": "^1.98.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.34.3",
