@@ -25,6 +25,8 @@ import {
   LanguageActionTypes,
   LanguageLevel,
   LanguageType,
+  ProjectActionTypes,
+  ProjectType,
   SkillsActionTypes,
 } from "@/lib/types";
 import { CvAction } from "./reducer";
@@ -38,6 +40,8 @@ import ExperienceForm from "../experience/experience-form";
 import LanguageForm from "../languages/language-form";
 import EducationForm from "../education/education-form";
 import CertificationForm from "../certifications/certification-form";
+import ProjectsSection from "../projects/projects-section";
+import ProjectForm from "../projects/project-form";
 
 type CvProps = {
   data: CvType;
@@ -84,7 +88,20 @@ export default function CvEdit(props: CvProps) {
     skills,
     languages,
     certifications,
+    projects,
   } = data;
+
+  // project
+  const [lastAddedProjectId, setLastAddedProjectId] = useState<string | null>(
+    null
+  );
+  const [projectModalOpened, setProjectModalOpened] = useState(false);
+  const [newProject, setNewProject] = useState<ProjectType | null>({
+    id: crypto.randomUUID(),
+    name: "",
+    description: "",
+    url: "",
+  });
 
   const [lastAddedEducationId, setLastAddedEducationId] = useState<
     string | null
@@ -167,6 +184,26 @@ export default function CvEdit(props: CvProps) {
     });
 
     setExperienceModalOpened(false);
+  };
+
+  const handleSubmitAddProject = () => {
+    if (!newProject) return;
+
+    dispatch({
+      type: ProjectActionTypes.ADD_PROJECT,
+      payload: newProject,
+    });
+
+    setLastAddedProjectId(newProject.id);
+
+    setNewProject({
+      id: crypto.randomUUID(),
+      name: "",
+      description: "",
+      url: "",
+    });
+
+    setProjectModalOpened(false);
   };
 
   const handleSubmitAddEducation = () => {
@@ -278,31 +315,6 @@ export default function CvEdit(props: CvProps) {
         </AccordionSection>
 
         <AccordionSection
-          id="education"
-          title="Education"
-          isOpen={openItem === "education"}
-          action={
-            <Button
-              variant="secondary"
-              size="icon"
-              onClick={(e) => {
-                e.stopPropagation();
-                setEducationModalOpened(true);
-              }}
-              className="h-7 w-7"
-            >
-              <PlusIcon className="w-4 h-4" />
-            </Button>
-          }
-        >
-          <EducationSection
-            educationItems={education}
-            dispatch={dispatch}
-            lastAddedId={lastAddedEducationId}
-          />
-        </AccordionSection>
-
-        <AccordionSection
           id="languages"
           title="Languages"
           isOpen={openItem === "languages"}
@@ -324,6 +336,31 @@ export default function CvEdit(props: CvProps) {
             languages={languages}
             dispatch={dispatch}
             lastAddedId={lastAddedLanguageId}
+          />
+        </AccordionSection>
+
+        <AccordionSection
+          id="education"
+          title="Education"
+          isOpen={openItem === "education"}
+          action={
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setEducationModalOpened(true);
+              }}
+              className="h-7 w-7"
+            >
+              <PlusIcon className="w-4 h-4" />
+            </Button>
+          }
+        >
+          <EducationSection
+            educationItems={education}
+            dispatch={dispatch}
+            lastAddedId={lastAddedEducationId}
           />
         </AccordionSection>
 
@@ -352,7 +389,30 @@ export default function CvEdit(props: CvProps) {
           />
         </AccordionSection>
 
-        {/* Projects */}
+        <AccordionSection
+          id="projects"
+          title="Projects"
+          isOpen={openItem === "projects"}
+          action={
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={(e) => {
+                e.stopPropagation();
+                setProjectModalOpened(true);
+              }}
+              className="h-7 w-7"
+            >
+              <PlusIcon className="w-4 h-4" />
+            </Button>
+          }
+        >
+          <ProjectsSection
+            projects={projects}
+            dispatch={dispatch}
+            lastAddedId={lastAddedProjectId}
+          />
+        </AccordionSection>
       </Accordion>
 
       <NewModal
@@ -430,6 +490,23 @@ export default function CvEdit(props: CvProps) {
           isNew
         />
       </NewModal>
+
+      <NewModal
+        open={projectModalOpened}
+        setOpen={setProjectModalOpened}
+        formId="project-form"
+        title="Add Project"
+      >
+        <ProjectForm
+          formId="project-form"
+          project={newProject}
+          dispatch={dispatch}
+          setNewProject={setNewProject}
+          onSubmit={handleSubmitAddProject}
+          hideValidationErrors={false}
+          isNew
+        />
+      </NewModal>
     </div>
   );
 }
@@ -463,8 +540,6 @@ function AccordionSection(props: {
         >
           <div className="flex items-center w-full">
             <h2 className="text-base font-semibold text-foreground">{title}</h2>
-
-            {/* <div className="ml-2">{isOpen && action}</div> */}
             <div className="w-8" />
           </div>
         </AccordionTrigger>

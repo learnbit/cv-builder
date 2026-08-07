@@ -1,6 +1,5 @@
 import { ExperienceItemType } from "../../lib/types";
 import { ExperienceActionTypes } from "../../lib/types";
-// create type for action.type
 
 export const defaultExperience = {
   id: "new",

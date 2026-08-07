@@ -7,7 +7,7 @@ export function FormCard({
 }) {
   return (
     <div
-      className={`bg-card border border-border/80 rounded-lg p-6 space-y-4 ${className}`}
+      className={`bg-card border border-border/80 rounded-lg p-6 space-y-4 ${className} max-h-[85vh] overflow-y-auto`}
     >
       {children}
     </div>

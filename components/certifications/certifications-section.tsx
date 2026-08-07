@@ -23,7 +23,7 @@ export default function CertificationsSection(
           behavior: "smooth",
           block: "center",
         });
-      }, 250); // 👈 ajusta (200–350ms)
+      }, 250);
 
       return () => clearTimeout(timeout);
     }

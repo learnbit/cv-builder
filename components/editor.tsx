@@ -28,63 +28,75 @@ export default function Main({
   }, [cvState, userId]);
 
   return (
-    <main className="flex-1 min-h-0 grid md:grid-cols-2 overflow-x-hidden gap-6 p-6">
-      <div className="md:hidden col-span-2">
-        <Tabs defaultValue="edit" className="w-full">
+    <main className="flex-1 min-h-0 overflow-hidden p-6">
+      {/* Mobile / tablet / medium desktop layout */}
+      <div className="min-[1700px]:hidden h-full">
+        <Tabs defaultValue="edit" className="flex h-full flex-col">
           <TabsList
             className="
-            grid w-full 
-            grid-cols-2
-            bg-muted
-            rounded-lg
-            h-12
-            p-1
-            border border-border
-          "
+              grid w-full grid-cols-2
+              bg-muted
+              rounded-lg
+              h-12
+              p-1
+              border border-border
+              shrink-0
+            "
           >
             <TabsTrigger
               value="edit"
-              className="h-full
-              text-base font-semibold
-              transition-all duration-200
-              data-[state=active]:bg-background
-              data-[state=active]:shadow-sm
-              data-[state=inactive]:text-muted-foreground"
+              className="
+                h-full
+                text-base font-semibold
+                transition-all duration-200
+                data-[state=active]:bg-background
+                data-[state=active]:shadow-sm
+                data-[state=inactive]:text-muted-foreground
+              "
             >
               Editor
             </TabsTrigger>
+
             <TabsTrigger
               value="preview"
-              className="h-full
-              text-base font-semibold
-              transition-all duration-200
-              data-[state=active]:bg-background
-              data-[state=active]:shadow-sm
-              data-[state=inactive]:text-muted-foreground"
+              className="
+                h-full
+                text-base font-semibold
+                transition-all duration-200
+                data-[state=active]:bg-background
+                data-[state=active]:shadow-sm
+                data-[state=inactive]:text-muted-foreground
+              "
             >
               Preview
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="edit" className="flex-1 min-h-0 overflow-y-auto">
+          <TabsContent
+            value="edit"
+            className="flex-1 min-h-0 overflow-y-auto mt-6"
+          >
             <CvEdit data={cvState} dispatch={dispatch} />
           </TabsContent>
 
           <TabsContent
             value="preview"
-            className="flex-1 min-h-0 overflow-y-auto"
+            className="flex-1 min-h-0 overflow-auto mt-6"
           >
             <CVPreview data={cvState} />
           </TabsContent>
         </Tabs>
       </div>
 
-      <div className="hidden md:block min-h-0 overflow-hidden">
-        <CvEdit data={cvState} dispatch={dispatch} />
-      </div>
+      {/* Large desktop layout: only when A4 preview has enough width */}
+      <div className="hidden min-[1700px]:grid h-full grid-cols-2 gap-6">
+        <div className="min-h-0 overflow-hidden">
+          <CvEdit data={cvState} dispatch={dispatch} />
+        </div>
 
-      <div className="hidden md:block min-h-0 overflow-hidden">
-        <CVPreview data={cvState} />
+        <div className="min-h-0 overflow-hidden">
+          <CVPreview data={cvState} />
+        </div>
       </div>
     </main>
   );

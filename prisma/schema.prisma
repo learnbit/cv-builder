@@ -14,3 +14,15 @@ model Cv {
   updatedAt DateTime @updatedAt
   id        String   @id @default(cuid())
 }
+
+model Event {
+  id        String   @id @default(cuid())
+  userId    String?
+  name      String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([name, createdAt])
+  @@index([userId, createdAt])
+}
+

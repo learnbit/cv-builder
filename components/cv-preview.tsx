@@ -1,281 +1,543 @@
-import usePagination from "@/hooks/usePagination";
 import { LanguageLevelLabel } from "@/lib/strings";
-import { CvType, ExperienceItemType, ProfessionalLinkType } from "@/lib/types";
+import { CvType, ExperienceItemType } from "@/lib/types";
 import { cx } from "class-variance-authority";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useReactToPrint } from "react-to-print";
+import React, { useMemo, useRef, useState } from "react";
 import { FileDownIcon } from "lucide-react";
+import { isPhoneHref, isWebUrl, normalizeUrl, toHref } from "@/lib/utils";
 
 type CVPreviewProps = {
   data: CvType;
 };
 
-type BlockType = {
-  key: string;
-  node: React.ReactNode;
-  keepWithNext?: boolean;
-};
+export default function CVPreview({ data }: CVPreviewProps) {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [pageCount, setPageCount] = useState(1);
 
-export default function CVPreview(props: CVPreviewProps) {
-  const { data } = props;
   const {
     basicInfo,
+    experiences: rawExperiences,
+    education: rawEducation,
+    skills: rawSkills,
+    languages: rawLanguages,
+    certifications: rawCertifications,
+    projects: rawProjects,
+  } = data;
+
+  const normalized = useMemo(
+    () => ({
+      experiences: rawExperiences ?? [],
+      education: rawEducation ?? [],
+      skills: rawSkills ?? [],
+      languages: rawLanguages ?? [],
+      certifications: rawCertifications ?? [],
+      projects: rawProjects ?? [],
+      basicInfo: {
+        fullName: basicInfo?.fullName ?? "",
+        title: basicInfo?.title ?? "",
+        about: basicInfo?.about ?? "",
+        linkedin: basicInfo?.linkedin ?? "",
+        github: basicInfo?.github ?? "",
+        website: basicInfo?.website ?? "",
+        email: basicInfo?.email ?? "",
+        phone: basicInfo?.phone ?? "",
+      },
+    }),
+    [
+      rawExperiences,
+      rawEducation,
+      rawSkills,
+      rawLanguages,
+      rawCertifications,
+      rawProjects,
+      basicInfo,
+    ]
+  );
+
+  const {
     experiences,
     education,
     skills,
     languages,
     certifications,
-    // links,
-  } = data;
-  const { linkedin, github, website, email, phone } = basicInfo;
+    projects,
+    basicInfo: safeBasicInfo,
+  } = normalized;
 
-  const printRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  useEffect(() => {
-    const observer = new ResizeObserver(([entry]) => {
-      const width = entry.contentRect.width;
-      const newScale = Math.min(width / 850, 1); // 794 + margen
-      setScale(newScale);
-    });
-
-    if (contentRef.current) {
-      observer.observe(contentRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-  });
+  const { linkedin, github, website, email, phone } = safeBasicInfo;
 
   const links = useMemo(
     () => [
-      ...(linkedin
-        ? [
-            {
-              label: "LinkedIn",
-              url: linkedin,
-              placeholder: "https://linkedin.com/in/yourname",
-            },
-          ]
-        : []),
-      ...(github
-        ? [
-            {
-              label: "Github",
-              url: github,
-              placeholder: "https://github.com/yourusername",
-            },
-          ]
-        : []),
-      ...(website
-        ? [
-            {
-              label: "Website",
-              url: website,
-              placeholder: "https://yourwebsite.com",
-            },
-          ]
-        : []),
-      ...(email
-        ? [
-            {
-              label: "Email",
-              url: `mailto:${email}`,
-              placeholder: "",
-            },
-          ]
-        : []),
-      ...(phone
-        ? [
-            {
-              label: "Phone",
-              url: `tel:${phone}`,
-              placeholder: "",
-            },
-          ]
-        : []),
+      ...(linkedin ? [{ label: "LinkedIn", url: linkedin }] : []),
+      ...(github ? [{ label: "Github", url: github }] : []),
+      ...(website ? [{ label: "Website", url: website }] : []),
+      ...(email ? [{ label: "Email", url: `mailto:${email}` }] : []),
+      ...(phone ? [{ label: "Phone", url: `${phone}` }] : []),
     ],
     [email, phone, linkedin, github, website]
   );
 
-  const blocks: BlockType[] = useMemo(
-    () => [
-      {
-        key: "header",
-        keepWithNext: true,
-        node: (
-          <>
-            <h1 className="text-2xl font-bold">{basicInfo.fullName}</h1>
+  const html = useMemo(() => {
+    const experienceHtml =
+      experiences.length > 0
+        ? `
+          <h2 class="section-title">Experience</h2>
+          ${experiences
+            .map(
+              (exp) => `
+                <section class="experience-block">
+                  <h3 class="item-title">${escapeHtml(
+                    exp.title
+                  )} at ${escapeHtml(exp.company)}</h3>
+                  <p class="meta">${escapeHtml(exp.startDate)} - ${escapeHtml(
+                exp.endDate
+              )} | ${escapeHtml(exp.location)}</p>
+                  <p class="description">${formatDescription(
+                    exp.description
+                  )}</p>
+                </section>
+              `
+            )
+            .join("")}
+        `
+        : "";
 
-            <p className="text-lg text-gray-600 pt-1">{basicInfo.title}</p>
-
-            {links.length > 0 && (
-              <div className="text-sm text-gray-500 flex flex-wrap pt-1">
-                {links.map((link, index) => (
-                  <Link
-                    key={index}
-                    url={link?.url ?? ""}
-                    label={link?.label ?? ""}
-                    last={index === links.length - 1}
-                  />
-                ))}
-              </div>
-            )}
-
-            <p className="text-sm text-gray-600 leading-snug whitespace-pre-line text-justify pt-2">
-              {basicInfo.about}
-            </p>
-          </>
-        ),
-      },
-
-      {
-        key: "experience-title",
-        node: <SectionTitle title="Experience" />,
-        keepWithNext: true,
-      },
-
-      ...experiences.map((exp, i) => ({
-        key: `experience-${exp.id}`,
-        node: (
-          <ExperienceBlock
-            exp={exp}
-            isFirst={i === 0}
-            isLast={i === experiences.length - 1}
-          />
-        ),
-      })),
-
-      {
-        key: "skills-title",
-        node: <SectionTitle title="Skills" />,
-        keepWithNext: true,
-      },
-
-      {
-        key: "skills",
-        node: (
-          <ul className="grid grid-cols-2 gap-x-10 list-disc list-inside pt-2">
-            {skills.map((skill) => (
-              <li key={skill.id} className="text-sm text-gray-700">
-                {skill.name}
-              </li>
-            ))}
+    const skillsHtml =
+      skills.length > 0
+        ? `
+          <h2 class="section-title">Skills</h2>
+          <ul class="skills-list">
+            ${skills
+              .map((skill) => `<li>${escapeHtml(skill.name)}</li>`)
+              .join("")}
           </ul>
-        ),
-      },
+        `
+        : "";
 
-      {
-        key: "languages-title",
-        node: <SectionTitle title="Languages" />,
-        keepWithNext: true,
-      },
-
-      {
-        key: "languages",
-        node: (
-          <ul className="grid grid-cols-2 list-disc list-inside gap-x-10 pt-2">
-            {languages.map((lang) => (
-              <li key={lang.id} className="text-sm text-gray-700">
-                {lang.language} - {LanguageLevelLabel[lang.proficiency]}
-              </li>
-            ))}
+    const languagesHtml =
+      languages.length > 0
+        ? `
+          <h2 class="section-title">Languages</h2>
+          <ul class="languages-list">
+            ${languages
+              .map(
+                (lang) =>
+                  `<li>${escapeHtml(lang.language)} - ${escapeHtml(
+                    LanguageLevelLabel[lang.proficiency]
+                  )}</li>`
+              )
+              .join("")}
           </ul>
-        ),
-      },
+        `
+        : "";
 
-      {
-        key: "education-title",
-        node: <SectionTitle title="Education" />,
-        keepWithNext: true,
-      },
+    const educationHtml =
+      education.length > 0
+        ? `
+          <h2 class="section-title">Education</h2>
+          ${education
+            .map((edu) => {
+              const degree = `${edu.degree}${
+                edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ""
+              }`;
 
-      ...education.map((edu, index) => {
-        const degree = `${edu.degree}${
-          edu.fieldOfStudy ? ` in ${edu.fieldOfStudy}` : ""
-        }`;
+              return `
+                <section class="simple-item">
+                  <h3 class="item-title">${escapeHtml(degree)}</h3>
+                  <p class="meta">${escapeHtml(edu.school)} | ${escapeHtml(
+                edu.startDate
+              )} - ${escapeHtml(edu.endDate)}</p>
+                </section>
+              `;
+            })
+            .join("")}
+        `
+        : "";
 
-        const isFirst = index === 0;
-        const isLast = index === education.length - 1;
+    const certificationsHtml =
+      certifications.length > 0
+        ? `
+          <h2 class="section-title">Certifications</h2>
+          ${certifications
+            .map(
+              (cert) => `
+                <section class="simple-item">
+                  <h3 class="item-title">${escapeHtml(cert.name)}</h3>
+                  <p class="meta">${escapeHtml(
+                    cert.institution
+                  )} | ${escapeHtml(cert.startDate)} - ${escapeHtml(
+                cert.endDate
+              )}</p>
+                  ${
+                    cert.credentialId
+                      ? `<p class="meta">${escapeHtml(cert.credentialId)}</p>`
+                      : ""
+                  }
+                  ${
+                    cert.credentialUrl
+                      ? `<a href="${escapeHtml(
+                          cert.credentialUrl
+                        )}">View Credential</a>`
+                      : ""
+                  }
+                </section>
+              `
+            )
+            .join("")}
+        `
+        : "";
 
-        return {
-          key: `education-${edu.id}`,
-          node: (
-            <div className={cx(!isLast && "pb-3", isFirst && "pt-2")}>
-              <h3 className="text-base font-semibold">{degree}</h3>
+    const projectsHtml =
+      projects.length > 0
+        ? `
+          <h2 class="section-title">Projects</h2>
+          ${projects
+            .map(
+              (project) => `
+                <section class="simple-item">
+                  <h3 class="item-title">${escapeHtml(project.name)}</h3>
+                  <p class="project-description">${escapeHtml(
+                    project.description
+                  )}</p>
+                  ${
+                    project.url
+                      ? `<a href="${escapeHtml(
+                          normalizeUrl(project.url)
+                        )}">View Project</a>`
+                      : ""
+                  }
+                </section>
+              `
+            )
+            .join("")}
+        `
+        : "";
 
-              <p className="text-sm text-gray-600 pt-1">
-                {edu.school} | {edu.startDate} - {edu.endDate}
-              </p>
-            </div>
-          ),
-        };
-      }),
+    return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8" />
+  
+    <script>
+      window.PagedConfig = { auto: false };
+    </script>
+  
+    <script src="https://unpkg.com/pagedjs@0.4.3/dist/paged.polyfill.js"></script>
+    <style>
+  @page {
+    size: A4;
+    margin: 14mm 10mm;
+  }
 
-      {
-        key: "certifications-title",
-        node: <SectionTitle title="Certifications" />,
-        keepWithNext: true,
-      },
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #09090b;
+    font-family: Arial, sans-serif;
+    color: #111827;
+    overflow-x: auto;
+  }
 
-      ...certifications.map((cert, i) => {
-        const isFirst = i === 0;
-        const isLast = i === certifications.length - 1;
+  * {
+    box-sizing: border-box;
+  }
 
-        return {
-          key: `certification-${cert.id}`,
-          node: (
-            <div className={cx(!isLast && "pb-3", isFirst && "pt-2")}>
-              <h3 className="text-base font-semibold">{cert.name}</h3>
-              <p className="text-sm text-gray-600 pt-1">
-                {cert.institution} | {cert.startDate} - {cert.endDate}
-              </p>
-              <p className="text-sm text-gray-600 pt-1">{cert.credentialId}</p>
-              {cert.credentialUrl && (
-                <a
-                  href={cert.credentialUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 inline-block pt-1"
-                >
-                  View Credential
-                </a>
-              )}
-            </div>
-          ),
-        };
-      }),
-    ],
-    [
-      basicInfo,
-      experiences,
-      education,
-      skills,
-      languages,
-      certifications,
-      links,
-    ]
-  );
+  .cv-doc {
+    color: #111827;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.35;
+  }
 
-  const { measureRef, pages } = usePagination(blocks);
+  .name {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .title {
+    font-size: 18px;
+    color: #4b5563;
+    margin: 4px 0 0;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 4px;
+  }
+
+  .links a {
+    color: #6b7280;
+    text-decoration: none;
+  }
+
+  .about,
+  .project-description {
+    white-space: pre-wrap;
+  }
+
+  .about,
+  .project-description {
+    text-align: justify;
+  }
+
+  .description {
+    font-size: 14px;
+    color: #374151;
+    text-align: left;
+  }
+
+  .description-paragraph {
+    margin: 0 0 12px;
+    break-inside: auto;
+  }
+
+  .about {
+    margin-top: 8px;
+    color: #4b5563;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #d1d5db;
+    padding-top: 20px;
+    padding-bottom: 4px;
+    margin: 0;
+    break-after: avoid;
+  }
+
+  .experience-block {
+    padding-top: 8px;
+    padding-bottom: 12px;
+    break-inside: auto;
+  }
+
+  .item-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    break-after: avoid;
+  }
+
+  .meta {
+    font-size: 14px;
+    color: #4b5563;
+    margin: 0 0 4px;
+    break-after: avoid;
+  }
+
+  .skills-list,
+  .languages-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 40px;
+    padding-left: 18px;
+    padding-top: 8px;
+    margin: 0;
+  }
+
+  .skills-list li,
+  .languages-list li {
+    font-size: 14px;
+    color: #374151;
+  }
+
+  .simple-item {
+    padding-top: 8px;
+    padding-bottom: 12px;
+  }
+
+  /* Preview generated by Paged.js */
+  .pagedjs_pages {
+    width: 100%;
+    min-height: 100vh;
+
+    background: #09090b;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  /*
+    Fix del espacio blanco derecho:
+    Paged.js genera varias capas alrededor de la hoja.
+    Forzamos esas capas principales al ancho A4 exacto.
+  */
+  .pagedjs_page,
+  .pagedjs_sheet,
+  .pagedjs_pagebox {
+    width: 210mm !important;
+    min-width: 210mm !important;
+    max-width: 210mm !important;
+    background: white;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .pagedjs_page {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  }
+
+  .pagedjs_area,
+  .pagedjs_page_content,
+  .pagedjs_page_content > div {
+    background: white;
+  }
+
+  .pagedjs_bleed,
+  .pagedjs_marks-crop,
+  .pagedjs_marks-middle,
+  .pagedjs_margin-top-left-corner-holder,
+  .pagedjs_margin-top-right-corner-holder,
+  .pagedjs_margin-bottom-left-corner-holder,
+  .pagedjs_margin-bottom-right-corner-holder {
+    display: none !important;
+  }
+
+  @media print {
+    html,
+    body {
+      background: white;
+      overflow: visible;
+    }
+
+    .pagedjs_page,
+    .pagedjs_sheet,
+    .pagedjs_pagebox {
+      width: auto !important;
+      min-width: auto !important;
+      max-width: none !important;
+      background: white;
+      box-shadow: none;
+      overflow: visible;
+    }
+
+
+  }
+</style>
+  </head>
+  
+  <body>
+    <article class="cv-doc">
+      <header>
+        <h1 class="name">${escapeHtml(safeBasicInfo.fullName)}</h1>
+        <p class="title">${escapeHtml(safeBasicInfo.title)}</p>
+  
+        ${
+          links.length > 0
+            ? `<div class="links">
+                ${links
+                  .map((link, index) => {
+                    const last = index === links.length - 1;
+                    const href = toHref(link.url);
+                    const isPhone = isPhoneHref(href);
+
+                    if (isPhone) {
+                      return `<span>${escapeHtml(link.url)}${
+                        !last ? " •" : ""
+                      }</span>`;
+                    }
+
+                    return `<span><a href="${escapeHtml(href)}">${escapeHtml(
+                      link.label
+                    )}</a>${!last ? " •" : ""}</span>`;
+                  })
+                  .join("")}
+              </div>`
+            : ""
+        }
+  
+        ${
+          safeBasicInfo.about
+            ? `<p class="about">${escapeHtml(safeBasicInfo.about)}</p>`
+            : ""
+        }
+      </header>
+  
+      ${experienceHtml}
+      ${skillsHtml}
+      ${languagesHtml}
+      ${educationHtml}
+      ${certificationsHtml}
+      ${projectsHtml}
+    </article>
+  
+      <script>
+      window.addEventListener("load", async () => {
+        try {
+          await window.PagedPolyfill.preview();
+
+          const pages = document.querySelectorAll(".pagedjs_page").length;
+
+          window.parent.postMessage({
+            type: "PAGED_PREVIEW_READY",
+            pages
+          }, "*");
+        } catch (error) {
+          console.error("Paged preview failed", error);
+        }
+      });
+    </script>
+  </body>
+  </html>
+  `;
+  }, [
+    safeBasicInfo,
+    links,
+    experiences,
+    education,
+    skills,
+    languages,
+    certifications,
+    projects,
+  ]);
+
+  React.useEffect(() => {
+    function handleMessage(event: MessageEvent) {
+      if (event.data?.type === "PAGED_PREVIEW_READY") {
+        setPageCount(event.data.pages || 1);
+      }
+    }
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  const handleExportPdf = async () => {
+    try {
+      await fetch("/api/analytics/pdf-export", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pages: pageCount,
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to track pdf export", error);
+    }
+
+    iframeRef.current?.contentWindow?.print();
+  };
 
   return (
-    <div className="flex flex-1 flex-col h-full overflow-y-auto relative">
-      <div className="absolute top-8 right-8 z-30 group">
+    <div className="flex flex-1 flex-col h-full overflow-y-auto overflow-x-hidden relative bg-neutral-950">
+      <div className="absolute top-8 right-4 z-30 group">
         <button
-          onClick={handlePrint}
+          onClick={handleExportPdf}
           className="
             w-11 h-11
             flex items-center justify-center
@@ -307,102 +569,31 @@ export default function CVPreview(props: CVPreviewProps) {
         </span>
       </div>
 
-      <div
-        ref={measureRef}
-        className="fixed top-0 left-0 invisible pointer-events-none w-[794px] p-12 font-sans box-border flex flex-col"
-      >
-        {blocks.map((block) => (
-          <div key={block.key}>{block.node}</div>
-        ))}
-      </div>
-
-      <div
-        ref={contentRef}
-        className="bg-neutral-900 flex flex-col items-center gap-10 overflow-y-auto overflow-x-hidden py-10"
-      >
-        <div
-          style={{
-            transform: isMobile ? "none" : `scale(${scale})`,
-            transformOrigin: "top center",
-          }}
-          className="flex flex-col items-center gap-10 relative will-change-transform"
-          ref={printRef}
-        >
-          {pages.map((page, index) => (
-            <div
-              key={index}
-              className={cx(
-                "cv-page bg-white text-black p-6 shadow-2xl rounded-sm font-sans box-border flex flex-col",
-                isMobile ? "w-full h-auto" : "w-[794px] h-[1123px]"
-              )}
-            >
-              {page.map((block) => (
-                <div key={block.key}>{block.node}</div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
+      <iframe
+        ref={iframeRef}
+        title="CV Preview"
+        srcDoc={html}
+        className="w-full h-full bg-neutral-950 border-0"
+      />
     </div>
   );
 }
 
-function SectionTitle({ title }: { title: string }) {
-  return (
-    <h2 className="text-xs font-bold uppercase tracking-wide border-b border-gray-300 pt-5 pb-1">
-      {title}
-    </h2>
-  );
+function escapeHtml(value: unknown) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-function ExperienceBlock({
-  exp,
-  isFirst,
-  isLast,
-}: {
-  exp: ExperienceItemType;
-  isFirst: boolean;
-  isLast: boolean;
-}) {
-  return (
-    <div className={cx(!isLast && "pb-3", isFirst && "pt-2")}>
-      <h3 className="text-base font-semibold pb-1">
-        {exp.title} at {exp.company}
-      </h3>
-
-      <p className="text-sm text-gray-600 pb-1">
-        {exp.startDate} - {exp.endDate} | {exp.location}
-      </p>
-
-      <p className="text-sm text-gray-700 leading-snug whitespace-pre-line text-justify">
-        {exp.description}
-      </p>
-    </div>
-  );
-}
-
-function Link({
-  url,
-  label,
-  last,
-}: {
-  url: string;
-  label: string;
-  last?: boolean;
-}) {
-  return (
-    <div className="text-sm text-gray-500 flex flex-wrap">
-      <span>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:text-gray-700 hover:underline"
-        >
-          {label}
-        </a>
-      </span>
-      {!last && <span className="mx-2 text-gray-400">•</span>}
-    </div>
-  );
+function formatDescription(value: unknown) {
+  return String(value ?? "")
+    .split(/\n\s*\n/)
+    .map((paragraph) => {
+      const html = escapeHtml(paragraph).replaceAll("\n", "<br />");
+      return `<p class="description-paragraph">${html}</p>`;
+    })
+    .join("");
 }

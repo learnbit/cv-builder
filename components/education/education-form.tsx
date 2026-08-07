@@ -120,7 +120,7 @@ export default function EducationForm(props: EducationFormProps) {
         <TextField
           name="school"
           label="School"
-          placeholder="School"
+          placeholder="e.g University of San Francisco"
           value={school}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
@@ -131,7 +131,7 @@ export default function EducationForm(props: EducationFormProps) {
         <TextField
           name="degree"
           label="Degree"
-          placeholder="Degree"
+          placeholder="e.g. Bachelor of Science"
           value={degree}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
@@ -142,7 +142,7 @@ export default function EducationForm(props: EducationFormProps) {
         <TextField
           name="fieldOfStudy"
           label="Field of Study"
-          placeholder="Field of Study"
+          placeholder="e.g. Computer Science"
           value={fieldOfStudy}
           onChange={handleInputChange}
         />
@@ -150,7 +150,7 @@ export default function EducationForm(props: EducationFormProps) {
           <TextField
             name="startDate"
             label="Start Date"
-            placeholder="Start Date"
+            placeholder="e.g. Sep 2018"
             value={startDate}
             onChange={handleInputChange}
             {...(!hideValidationErrors && {
@@ -162,7 +162,7 @@ export default function EducationForm(props: EducationFormProps) {
           <TextField
             name="endDate"
             label="End Date"
-            placeholder="End Date"
+            placeholder="e.g. Jun 2022"
             value={endDate}
             onChange={handleInputChange}
             {...(!hideValidationErrors && {

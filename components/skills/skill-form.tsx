@@ -24,7 +24,7 @@ export default function SkillForm({ onSubmit, formId }: SkillFormProps) {
       <TextField
         name="skill"
         label="Skill"
-        placeholder="Skill"
+        placeholder="e.g. React"
         value={value}
         required={true}
         requiredMessage="Skill is required"

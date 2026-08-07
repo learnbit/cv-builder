@@ -8,6 +8,7 @@ import {
   certificationsReducer,
 } from "../certifications/reducer";
 import { EducationAction, educationReducer } from "../education/reducer";
+import projectReducer, { ProjectAction } from "../projects/reducer";
 
 export type CvLoadAction = {
   type: CvActionTypes;
@@ -21,7 +22,8 @@ export type CvAction =
   | BasicInfoAction
   | CertificationAction
   | EducationAction
-  | CvLoadAction;
+  | CvLoadAction
+  | ProjectAction;
 
 export function cvReducer(state: CvType, action: CvAction) {
   if (action.type === CvActionTypes.LOAD_CV) {
@@ -42,5 +44,6 @@ export function cvReducer(state: CvType, action: CvAction) {
       action as CertificationAction
     ),
     education: educationReducer(state.education, action as EducationAction),
+    projects: projectReducer(state.projects, action as ProjectAction),
   };
 }

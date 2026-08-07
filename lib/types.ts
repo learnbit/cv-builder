@@ -28,6 +28,13 @@ export type BasicInfoType = {
   website: string;
 };
 
+export type ProjectType = {
+  id: string;
+  name: string;
+  description: string;
+  url: string;
+};
+
 export type CertificationType = {
   id: string;
   name: string;
@@ -62,6 +69,7 @@ export type CvType = {
   skills: SkillsType[];
   languages: LanguageType[];
   certifications: CertificationType[];
+  projects: ProjectType[];
 };
 
 export const ProfessionalLinkType = {
@@ -89,6 +97,14 @@ export enum LanguageActionTypes {
   DELETE_LANGUAGE = "DELETE_LANGUAGE",
   MOVE_LANGUAGE_UP = "MOVE_LANGUAGE_UP",
   MOVE_LANGUAGE_DOWN = "MOVE_LANGUAGE_DOWN",
+}
+
+export enum ProjectActionTypes {
+  ADD_PROJECT = "ADD_PROJECT",
+  UPDATE_PROJECT = "UPDATE_PROJECT",
+  DELETE_PROJECT = "DELETE_PROJECT",
+  MOVE_PROJECT_UP = "MOVE_PROJECT_UP",
+  MOVE_PROJECT_DOWN = "MOVE_PROJECT_DOWN",
 }
 
 export enum ExperienceActionTypes {

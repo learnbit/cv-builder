@@ -127,7 +127,7 @@ export default function LanguageForm(props: LanguageFormProps) {
         <TextField
           name="language"
           label="Language"
-          placeholder="Language"
+          placeholder="e.g. English"
           value={idiom}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {

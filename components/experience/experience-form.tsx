@@ -133,7 +133,7 @@ export default function ExperienceForm(props: ExperienceFormProps) {
           name="title"
           label="Job Title"
           value={title}
-          placeholder="Job Title"
+          placeholder="e.g. Senior Frontend Engineer"
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
             required: true,
@@ -144,7 +144,7 @@ export default function ExperienceForm(props: ExperienceFormProps) {
         <TextField
           name="company"
           label="Company"
-          placeholder="Company"
+          placeholder="e.g. Acme Corp"
           value={company}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
@@ -157,7 +157,7 @@ export default function ExperienceForm(props: ExperienceFormProps) {
           <TextField
             name="startDate"
             label="Start Date"
-            placeholder="Jan 2010"
+            placeholder="e.g. Jan 2010"
             value={startDate}
             onChange={handleInputChange}
             {...(!hideValidationErrors && {
@@ -169,7 +169,7 @@ export default function ExperienceForm(props: ExperienceFormProps) {
           <TextField
             name="endDate"
             label="End Date"
-            placeholder="Present"
+            placeholder="e.g. Present"
             value={endDate}
             onChange={handleInputChange}
             {...(!hideValidationErrors && {
@@ -181,7 +181,7 @@ export default function ExperienceForm(props: ExperienceFormProps) {
         <TextField
           name="location"
           label="Location"
-          placeholder="Location"
+          placeholder="e.g. Remote or New York, NY"
           value={location}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
@@ -192,7 +192,7 @@ export default function ExperienceForm(props: ExperienceFormProps) {
         <TextField
           name="description"
           label="Description"
-          placeholder="Description"
+          placeholder="Describe your responsibilities and impact (2–4 bullet-style sentences)"
           value={description}
           multiline
           onChange={handleInputChange}

@@ -18,7 +18,7 @@ export default function LinksSection(props: LinksSectionProps) {
       <LinkForm
         name={"LinkedIn"}
         value={linkedin}
-        placeholder={"https://linkedin.com/in/yourname"}
+        placeholder={"e.g. linkedin.com/in/johndoe"}
         onChange={(e) => {
           dispatch({
             type: BasicInfoActionTypes.UPDATE_BASIC_INFO,
@@ -29,7 +29,7 @@ export default function LinksSection(props: LinksSectionProps) {
       <LinkForm
         name={"Github"}
         value={github}
-        placeholder={"https://github.com/yourusername"}
+        placeholder={"e.g. https://github.com/yourusername"}
         onChange={(e) => {
           dispatch({
             type: BasicInfoActionTypes.UPDATE_BASIC_INFO,
@@ -40,7 +40,7 @@ export default function LinksSection(props: LinksSectionProps) {
       <LinkForm
         name={"Website"}
         value={website}
-        placeholder={"https://yourwebsite.com"}
+        placeholder={"e.g. https://yourwebsite.com"}
         onChange={(e) => {
           dispatch({
             type: BasicInfoActionTypes.UPDATE_BASIC_INFO,
@@ -51,7 +51,7 @@ export default function LinksSection(props: LinksSectionProps) {
       <LinkForm
         name={"Email"}
         value={email}
-        placeholder={"youremail@example.com"}
+        placeholder={"e.g. youremail@example.com"}
         onChange={(e) => {
           dispatch({
             type: BasicInfoActionTypes.UPDATE_BASIC_INFO,
@@ -62,7 +62,7 @@ export default function LinksSection(props: LinksSectionProps) {
       <LinkForm
         name={"Phone"}
         value={phone}
-        placeholder={"+1 555 123 4567"}
+        placeholder={"e.g. +1 555 123 4567"}
         onChange={(e) => {
           dispatch({
             type: BasicInfoActionTypes.UPDATE_BASIC_INFO,

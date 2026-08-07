@@ -85,6 +85,16 @@ export const mockCertifications = [
   },
 ];
 
+export const mockProjects = [
+  {
+    id: "1",
+    name: "Personal Portfolio Website",
+    description:
+      "A responsive portfolio website built with React and Tailwind CSS to showcase my projects and skills.",
+    url: "https://yourportfolio.com",
+  },
+];
+
 export const mockCv: CvType = {
   basicInfo: mockBasicInfo,
   experiences: mockExperienceItems,
@@ -92,4 +102,5 @@ export const mockCv: CvType = {
   skills: mockSkills,
   languages: mockLanguages,
   certifications: mockCertifications,
+  projects: mockProjects,
 };

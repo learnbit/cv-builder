@@ -19,7 +19,7 @@ export default function BasicInfoSection(props: BasicInfoSectionProps) {
         name="fullName"
         label="Full Name"
         value={fullName}
-        placeholder="Full Name"
+        placeholder="John Doe"
         onChange={(e) =>
           dispatch({
             type: BasicInfoActionTypes.UPDATE_BASIC_INFO,
@@ -32,7 +32,7 @@ export default function BasicInfoSection(props: BasicInfoSectionProps) {
         name="title"
         label="Title"
         value={title}
-        placeholder="Title"
+        placeholder="e.g. Senior Frontend Engineer | React & TypeScript"
         onChange={(e) =>
           dispatch({
             type: BasicInfoActionTypes.UPDATE_BASIC_INFO,
@@ -45,7 +45,7 @@ export default function BasicInfoSection(props: BasicInfoSectionProps) {
         name="about"
         label="About You"
         value={about}
-        placeholder="About you"
+        placeholder="Brief professional summary (2–4 sentences)"
         multiline
         onChange={(e) =>
           dispatch({

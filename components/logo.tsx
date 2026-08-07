@@ -7,7 +7,7 @@ export default function Logo({ className }: { className: string }) {
     ${className}
   `}
     >
-      CV
+      CV Builder
     </div>
   );
 }

@@ -122,7 +122,7 @@ export default function CertificationForm(props: CertificationFormProps) {
         <TextField
           name="name"
           label="Certification Name"
-          placeholder="Certification Name"
+          placeholder="e.g. AWS Certified Solutions Architect"
           value={name}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
@@ -133,7 +133,7 @@ export default function CertificationForm(props: CertificationFormProps) {
         <TextField
           name="institution"
           label="Issuing Institution"
-          placeholder="Issuing Institution"
+          placeholder="e.g. Google"
           value={institution}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
@@ -145,7 +145,7 @@ export default function CertificationForm(props: CertificationFormProps) {
           <TextField
             name="startDate"
             label="Start Date"
-            placeholder="Start Date"
+            placeholder="e.g. Jan 2023"
             value={startDate}
             onChange={handleInputChange}
             {...(!hideValidationErrors && {
@@ -157,7 +157,7 @@ export default function CertificationForm(props: CertificationFormProps) {
           <TextField
             name="endDate"
             label="End Date"
-            placeholder="End Date"
+            placeholder="e.g. Jul 2023"
             value={endDate}
             onChange={handleInputChange}
             {...(!hideValidationErrors && {
@@ -169,7 +169,7 @@ export default function CertificationForm(props: CertificationFormProps) {
         <TextField
           name="credentialId"
           label="Credential ID"
-          placeholder="Credential ID"
+          placeholder="e.g. ABCD-1234"
           value={credentialId}
           onChange={handleInputChange}
           {...(!hideValidationErrors && {
@@ -180,7 +180,7 @@ export default function CertificationForm(props: CertificationFormProps) {
         <TextField
           name="credentialUrl"
           label="Credential URL"
-          placeholder="Credential URL"
+          placeholder="e.g. https://verify.aws.amazon.com/ABCD-1234"
           value={credentialUrl}
           onChange={handleInputChange}
         />
