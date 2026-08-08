@@ -283,41 +283,26 @@
   }
 
   /* quitar fondo oscuro del preview */
-  .bg-neutral-800 {
+  .cv-print-root {
     background: white !important;
-  }
-
-  /* quitar spacing entre paginas */
-  .gap-10 {
     gap: 0 !important;
+    transform: none !important;
+    height: auto !important;
+    align-items: flex-start !important;
   }
 
-  .cv-page {
+  .cv-print-root .cv-page {
     page-break-after: always;
     break-after: page;
-  }
-
-  .cv-page:last-child {
-    page-break-after: auto;
-    break-after: auto;
-  }
-
-  .cv-page {
     width: 794px !important;
     height: 1123px !important;
     padding: 24px !important; /* 👈 controla tu espacio real */
     box-shadow: none !important;
   }
 
-  /* 🔥 CRÍTICO: eliminar transform */
-  [style*="transform"] {
-    transform: none !important;
-    height: auto !important;
-  }
-
-  /* evitar centrado que cambia layout */
-  .flex.items-center {
-    align-items: flex-start !important;
+  .cv-print-root .cv-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
   }
 }
 

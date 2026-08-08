@@ -359,7 +359,7 @@ export default function CVPreview({ data }: CVPreviewProps) {
 
       <div
         ref={measureRef}
-        className="fixed top-0 left-0 invisible pointer-events-none w-[794px] p-12 font-sans box-border flex flex-col"
+        className="fixed top-0 left-0 invisible pointer-events-none w-[794px] p-6 font-sans box-border flex flex-col"
       >
         {blocks.map((block) => (
           <div key={block.key}>{block.node}</div>
@@ -375,7 +375,7 @@ export default function CVPreview({ data }: CVPreviewProps) {
             transform: isMobile ? "none" : `scale(${scale})`,
             transformOrigin: "top center",
           }}
-          className="flex flex-col items-center gap-10 relative will-change-transform"
+          className="cv-print-root flex flex-col items-center gap-10 relative will-change-transform"
           ref={printRef}
         >
           {pages.map((page, index) => (
