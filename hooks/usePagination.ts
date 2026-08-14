@@ -20,39 +20,10 @@ export default function usePagination<T extends BlockWithKeep>(blocks: T[]) {
 
     if (!invisibleChildren.length) return;
 
-    const newPages: T[][] = [];
-    let page: T[] = [];
-    let height = 0;
-
-    for (let i = 0; i < invisibleChildren.length; i++) {
-      const blockHeight = invisibleChildren[i].offsetHeight;
-      const block = blocks[i];
-
-      // If block must stay with the next block (like section titles)
-      if (block?.keepWithNext && i + 1 < invisibleChildren.length) {
-        const nextHeight = invisibleChildren[i + 1].offsetHeight;
-
-        if (
-          height + blockHeight + nextHeight > MAX_PAGE_CONTENT_HEIGHT &&
-          page.length > 0
-        ) {
-          newPages.push(page);
-          page = [];
-          height = 0;
-        }
-      } else {
-        if (height + blockHeight > MAX_PAGE_CONTENT_HEIGHT && page.length > 0) {
-          newPages.push(page);
-          page = [];
-          height = 0;
-        }
-      }
-
-      page.push(block);
-      height += blockHeight;
-    }
-
-    if (page.length) newPages.push(page);
+    const newPages = paginateBlocks(
+      blocks,
+      invisibleChildren.map((child) => child.offsetHeight)
+    );
 
     if (!isSamePages(pagesRef.current, newPages)) {
       pagesRef.current = newPages;
@@ -64,6 +35,57 @@ export default function usePagination<T extends BlockWithKeep>(blocks: T[]) {
     measureRef,
     pages,
   };
+}
+
+export function paginateBlocks<T extends BlockWithKeep>(
+  blocks: T[],
+  heights: number[],
+  maxPageHeight = MAX_PAGE_CONTENT_HEIGHT
+) {
+  const newPages: T[][] = [];
+  let page: T[] = [];
+  let height = 0;
+
+  for (let i = 0; i < blocks.length; i++) {
+    const blockHeight = heights[i] ?? 0;
+
+    if (blocks[i]?.keepWithNext && i + 1 < blocks.length) {
+      let keepGroupEnd = i;
+      while (
+        keepGroupEnd + 1 < blocks.length &&
+        blocks[keepGroupEnd]?.keepWithNext
+      ) {
+        keepGroupEnd++;
+      }
+
+      const keepGroupHeight = heights
+        .slice(i, keepGroupEnd + 1)
+        .reduce((total, itemHeight) => total + itemHeight, 0);
+
+      if (
+        height + keepGroupHeight > maxPageHeight &&
+        keepGroupHeight <= maxPageHeight &&
+        page.length > 0
+      ) {
+        newPages.push(page);
+        page = [];
+        height = 0;
+      }
+    }
+
+    if (height + blockHeight > maxPageHeight && page.length > 0) {
+      newPages.push(page);
+      page = [];
+      height = 0;
+    }
+
+    page.push(blocks[i]);
+    height += blockHeight;
+  }
+
+  if (page.length) newPages.push(page);
+
+  return newPages;
 }
 
 function isSamePages<T>(a: T[][], b: T[][]) {

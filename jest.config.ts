@@ -11,6 +11,7 @@ const config: Config = {
   testMatch: ["**/*.test.ts"],
 
   clearMocks: true,
+  watchman: false,
 };
 
 export default config;

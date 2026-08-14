@@ -120,16 +120,13 @@ export default function CVPreview({ data }: CVPreviewProps) {
               node: <SectionTitle title="Experience" />,
               keepWithNext: true,
             },
-            ...experiences.map((experience, index) => ({
-              key: `experience-${experience.id}`,
-              node: (
-                <ExperienceBlock
-                  experience={experience}
-                  isFirst={index === 0}
-                  isLast={index === experiences.length - 1}
-                />
-              ),
-            })),
+            ...experiences.flatMap((experience, index) =>
+              getExperienceBlocks(
+                experience,
+                index === 0,
+                index === experiences.length - 1
+              )
+            ),
           ]
         : []),
 
@@ -405,28 +402,79 @@ function SectionTitle({ title }: { title: string }) {
   );
 }
 
-function ExperienceBlock({
-  experience,
-  isFirst,
-  isLast,
-}: {
-  experience: ExperienceItemType;
-  isFirst: boolean;
-  isLast: boolean;
-}) {
-  return (
-    <div className={cx(!isLast && "pb-3", isFirst && "pt-2")}>
-      <h3 className="text-base font-semibold pb-1">
-        {experience.title} at {experience.company}
-      </h3>
-      <p className="text-sm text-gray-600 pb-1">
-        {experience.startDate} - {experience.endDate} | {experience.location}
-      </p>
-      <p className="text-sm text-gray-700 leading-snug whitespace-pre-line text-justify">
-        {experience.description}
-      </p>
-    </div>
-  );
+// Keep every measured description fragment comfortably below one page, even
+// when a user enters one long paragraph without line breaks.
+const MAX_DESCRIPTION_CHARACTERS_PER_BLOCK = 320;
+
+function getExperienceBlocks(
+  experience: ExperienceItemType,
+  isFirst: boolean,
+  isLast: boolean
+): BlockType[] {
+  const descriptionBlocks = splitExperienceDescription(experience.description);
+
+  return [
+    {
+      key: `experience-${experience.id}-header`,
+      keepWithNext: descriptionBlocks.length > 0,
+      node: (
+        <div
+          className={cx(
+            isFirst && "pt-2",
+            !isLast && descriptionBlocks.length === 0 && "pb-3"
+          )}
+        >
+          <h3 className="text-base font-semibold pb-1">
+            {experience.title} at {experience.company}
+          </h3>
+          <p className="text-sm text-gray-600 pb-1">
+            {experience.startDate} - {experience.endDate} | {experience.location}
+          </p>
+        </div>
+      ),
+    },
+    ...descriptionBlocks.map((description, index) => ({
+      key: `experience-${experience.id}-description-${index}`,
+      node: (
+        <p
+          className={cx(
+            "text-sm text-gray-700 leading-snug whitespace-pre-line break-words text-justify",
+            !isLast && index === descriptionBlocks.length - 1 && "pb-3"
+          )}
+        >
+          {description}
+        </p>
+      ),
+    })),
+  ];
+}
+
+function splitExperienceDescription(description: string) {
+  if (!description.trim()) return [];
+
+  return description.trim().replace(/\r\n/g, "\n").split("\n").flatMap((line) => {
+    if (!line.trim()) return ["\u00a0"];
+
+    const chunks: string[] = [];
+    let remaining = line.trim();
+
+    while (remaining.length > MAX_DESCRIPTION_CHARACTERS_PER_BLOCK) {
+      const wordBoundary = remaining.lastIndexOf(
+        " ",
+        MAX_DESCRIPTION_CHARACTERS_PER_BLOCK
+      );
+      const splitAt = wordBoundary > 0
+        ? wordBoundary
+        : MAX_DESCRIPTION_CHARACTERS_PER_BLOCK;
+
+      chunks.push(remaining.slice(0, splitAt));
+      remaining = remaining.slice(splitAt).trimStart();
+    }
+
+    chunks.push(remaining);
+
+    return chunks;
+  });
 }
 
 function Link({
