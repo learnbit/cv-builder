@@ -15,7 +15,7 @@ export type ProjectAction =
   | { type: ProjectActionTypes.MOVE_PROJECT_DOWN; payload: string };
 
 export default function projectReducer(
-  state: ProjectType[],
+  state: ProjectType[] = [],
   action: ProjectAction
 ): ProjectType[] {
   switch (action.type) {
